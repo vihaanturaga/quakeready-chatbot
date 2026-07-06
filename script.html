@@ -1,0 +1,26 @@
+window.addEventListener('message', function(event) {
+  var question = event.data;
+  var apiKey = 'YOUR_API_KEY_HERE';
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json'
+      },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5',
+      max_tokens: 1024,
+      system: 'You are an earthquake safety assistant. Only answer questions about earthquake safety, preparedness, evacuation, and emergency supplies. If someone asks something not related to earthquakes, politely redirect them to earthquake topics.',
+      messages: [{role: 'user', content: question}]
+      })
+    })
+  .then(response => response.json())
+  .then(data => {
+    var answer = data.content[0].text;
+    window.parent.postMessage(answer, '*');
+    })
+  .catch(error => {
+    window.parent.postMessage('Sorry I could not connect. Please check your internet connection.', '*');
+    })
+  });
