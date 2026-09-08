@@ -1,5 +1,6 @@
 window.addEventListener('message', function(event) {
   var question = event.data;
+  if (!question || question === '') return;
   var apiKey = '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';
   fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
@@ -9,18 +10,22 @@ window.addEventListener('message', function(event) {
     },
     body: JSON.stringify({
       model: 'llama-3.1-8b-instant',
+      max_tokens: 500,
       messages: [
-        {role: 'system', content: 'You are an earthquake safety assistant. Only answer questions about earthquake safety, preparedness, evacuation, and emergency supplies. Keep answers short and practical. If someone asks something not related to earthquakes, politely redirect them.'},
-        {role: 'user', content: question}
+        {role: 'system', content: 'You are an earthquake safety assistant. Only answer questions about earthquake safety. Keep answers short and practical.'},
+        {role: 'user', content: String(question)}
       ]
     })
   })
-  .then(response => response.json())
-  .then(data => {
-    var answer = data.choices[0].message.content;
-    window.parent.postMessage(answer, '*');
+  .then(function(response) { return response.json(); })
+  .then(function(data) {
+    if (data.choices && data.choices[0]) {
+      window.parent.postMessage(data.choices[0].message.content, '*');
+    } else {
+      window.parent.postMessage('Error: ' + JSON.stringify(data), '*');
+    }
   })
-  .catch(error => {
-    window.parent.postMessage('Sorry I could not connect. Please check your internet connection.', '*');
-  })
+  .catch(function(error) {
+    window.parent.postMessage('Connection error: ' + error.message, '*');
+  });
 });
