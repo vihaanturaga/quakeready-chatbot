@@ -8,7 +8,7 @@ window.addEventListener('message', function(event) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: 'llama3-8b-8192',
+      model: 'llama-3.1-8b-instant',
       messages: [
         {role: 'system', content: 'You are an earthquake safety assistant. Only answer questions about earthquake safety, preparedness, evacuation, and emergency supplies. Keep answers short and practical. If someone asks something not related to earthquakes, politely redirect them.'},
         {role: 'user', content: question}
