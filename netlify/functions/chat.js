@@ -33,7 +33,7 @@ exports.handler = async function(event, context) {
     });
 
     const data = await response.json();
-    const answer = data.choices[0].message.content;
+    const answer = data.choices ? data.choices[0].message.content : JSON.stringify(data);
 
     return {
       statusCode: 200,
